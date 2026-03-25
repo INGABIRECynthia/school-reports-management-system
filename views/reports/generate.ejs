@@ -1,0 +1,152 @@
+<% const activePage = 'reports'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold mb-0"><i class="bi bi-file-earmark-bar-graph me-2 text-info"></i>Report Card</h2>
+      <p class="text-muted mb-0">
+        Class: <strong><%= filters.class_name %></strong> |
+        Term: <strong><%= filters.term %></strong> |
+        Year: <strong><%= filters.year %></strong>
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/reports" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>New Report
+      </a>
+      <button onclick="window.print()" class="btn btn-info btn-sm text-white">
+        <i class="bi bi-printer me-1"></i>Print
+      </button>
+    </div>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Re-filter bar -->
+  <div class="card border-0 shadow-sm mb-4 no-print">
+    <div class="card-body py-3">
+      <form method="GET" action="/reports/generate" class="row g-2 align-items-end">
+        <div class="col-auto">
+          <select class="form-select form-select-sm" name="class_name">
+            <% classes.forEach(c => { %>
+              <option value="<%= c %>" <%= filters.class_name === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <select class="form-select form-select-sm" name="term">
+            <% terms.forEach(t => { %>
+              <option value="<%= t %>" <%= filters.term === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <select class="form-select form-select-sm" name="year">
+            <% years.forEach(y => { %>
+              <option value="<%= y %>" <%= filters.year == y ? 'selected' : '' %>><%= y %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <select class="form-select form-select-sm" name="student_id">
+            <option value="">All Students</option>
+            <% students.forEach(s => { %>
+              <option value="<%= s.id %>" <%= filters.student_id == s.id ? 'selected' : '' %>><%= s.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-sm btn-primary">
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <% if (reportData.length === 0) { %>
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+      No grade data found for the selected filters.
+    </div>
+  <% } else { %>
+    <% reportData.forEach(item => { %>
+      <div class="card border-0 shadow-sm mb-4 report-card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+          <div>
+            <h5 class="mb-0 fw-bold"><%= item.student.name %></h5>
+            <small>
+              ID: <%= item.student.student_id %> &nbsp;|&nbsp;
+              Class: <%= item.student.class_name %> &nbsp;|&nbsp;
+              Year: <%= item.student.year %>
+            </small>
+          </div>
+          <div class="text-end">
+            <div class="fs-4 fw-bold">
+              <span class="badge bg-<%= item.grade === 'A' ? 'success' : item.grade === 'B' ? 'info' : item.grade === 'C' ? 'warning' : item.grade === 'D' ? 'secondary' : 'danger' %> fs-5">
+                Grade <%= item.grade %>
+              </span>
+            </div>
+            <small>Rank: #<%= item.rank %></small>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Course</th>
+                  <th class="text-center">Marks</th>
+                  <th class="text-center">Max</th>
+                  <th class="text-center">%</th>
+                  <th class="text-center">Grade</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% item.courseRows.forEach(cr => { %>
+                  <tr>
+                    <td class="fw-semibold"><%= cr.course.name %> <span class="text-muted small">(<%= cr.course.code %>)</span></td>
+                    <td class="text-center"><%= cr.marks %></td>
+                    <td class="text-center"><%= cr.max_marks %></td>
+                    <td class="text-center">
+                      <div class="d-flex align-items-center gap-1 justify-content-center">
+                        <div class="progress flex-grow-1" style="height:6px;min-width:60px">
+                          <div class="progress-bar bg-<%= cr.percentage >= 80 ? 'success' : cr.percentage >= 50 ? 'warning' : 'danger' %>"
+                               style="width:<%= cr.percentage %>%"></div>
+                        </div>
+                        <span class="small"><%= cr.percentage %>%</span>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-<%= cr.grade === 'A' ? 'success' : cr.grade === 'B' ? 'info' : cr.grade === 'C' ? 'warning' : cr.grade === 'D' ? 'secondary' : 'danger' %>">
+                        <%= cr.grade %>
+                      </span>
+                    </td>
+                    <td><%= cr.remarks %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+              <tfoot class="table-secondary fw-bold">
+                <tr>
+                  <td colspan="3">Overall Average</td>
+                  <td class="text-center"><%= item.overallPct %>%</td>
+                  <td class="text-center">
+                    <span class="badge bg-<%= item.grade === 'A' ? 'success' : item.grade === 'B' ? 'info' : item.grade === 'C' ? 'warning' : item.grade === 'D' ? 'secondary' : 'danger' %>">
+                      <%= item.grade %>
+                    </span>
+                  </td>
+                  <td><%= item.remarks %></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

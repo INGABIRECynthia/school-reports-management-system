@@ -1,0 +1,116 @@
+<% const activePage = 'grades'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2 text-warning"></i>Grades</h2>
+    <a href="/grades/enter" class="btn btn-warning">
+      <i class="bi bi-pencil me-2"></i>Enter Grade
+    </a>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Filter form -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <form method="GET" action="/grades" class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Class</label>
+          <select class="form-select" name="class_name">
+            <option value="">All classes</option>
+            <% classes.forEach(c => { %>
+              <option value="<%= c %>" <%= filters.class_name === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Term</label>
+          <select class="form-select" name="term">
+            <option value="">Select term</option>
+            <% terms.forEach(t => { %>
+              <option value="<%= t %>" <%= filters.term === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Year</label>
+          <select class="form-select" name="year">
+            <option value="">Select year</option>
+            <% years.forEach(y => { %>
+              <option value="<%= y %>" <%= filters.year == y ? 'selected' : '' %>><%= y %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search me-2"></i>Filter
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <% if (!filters.class_name || !filters.term || !filters.year) { %>
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-funnel fs-1 d-block mb-2"></i>
+          Select a class, term and year to view grades.
+        </div>
+      <% } else if (grades.length === 0) { %>
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          No grades found for the selected filters.
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Marks</th>
+                <th>Percentage</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% grades.forEach(g => { %>
+                <% const pct = ((g.marks / g.max_marks) * 100).toFixed(1); %>
+                <tr>
+                  <td><span class="badge bg-secondary"><%= g.student_id %></span></td>
+                  <td class="fw-semibold"><%= g.student_name %></td>
+                  <td><%= g.course_name %> <span class="text-muted small">(<%= g.code %>)</span></td>
+                  <td><%= g.marks %>/<%= g.max_marks %></td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="progress flex-grow-1" style="height:8px">
+                        <div class="progress-bar bg-<%= pct >= 80 ? 'success' : pct >= 50 ? 'warning' : 'danger' %>"
+                             style="width:<%= pct %>%"></div>
+                      </div>
+                      <span class="small fw-semibold"><%= pct %>%</span>
+                    </div>
+                  </td>
+                  <td class="text-end">
+                    <form action="/grades/<%= g.id %>?_method=DELETE" method="POST" class="d-inline"
+                          onsubmit="return confirm('Delete this grade?')">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

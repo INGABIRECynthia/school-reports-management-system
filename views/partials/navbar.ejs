@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/dashboard">
+      <i class="bi bi-mortarboard-fill me-2"></i>School Reports MS
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'students' ? 'active' : '' %>" href="/students">
+            <i class="bi bi-people me-1"></i>Students
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'courses' ? 'active' : '' %>" href="/courses">
+            <i class="bi bi-book me-1"></i>Courses
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'grades' ? 'active' : '' %>" href="/grades">
+            <i class="bi bi-pencil-square me-1"></i>Grades
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'reports' ? 'active' : '' %>" href="/reports">
+            <i class="bi bi-file-earmark-bar-graph me-1"></i>Reports
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <span class="text-white me-3"><i class="bi bi-person-circle me-1"></i><%= user ? user.name : '' %></span>
+        <form action="/auth/logout" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button type="submit" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-box-arrow-right me-1"></i>Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>

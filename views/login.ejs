@@ -1,0 +1,65 @@
+<%- include('partials/head') %>
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-primary bg-gradient">
+  <div class="card shadow-lg border-0" style="width: 100%; max-width: 420px;">
+    <div class="card-body p-5">
+      <div class="text-center mb-4">
+        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+          <i class="bi bi-mortarboard-fill text-white fs-2"></i>
+        </div>
+        <h2 class="fw-bold text-primary">School Reports MS</h2>
+        <p class="text-muted small">Sign in to your account</p>
+      </div>
+
+      <%- include('partials/alerts') %>
+
+      <form action="/auth/login" method="POST" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email"
+                   placeholder="admin@school.com" required autocomplete="email" />
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" id="password" name="password"
+                   placeholder="••••••••" required autocomplete="current-password" />
+            <button class="btn btn-outline-secondary" type="button" id="togglePwd">
+              <i class="bi bi-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+          </button>
+        </div>
+      </form>
+
+      <hr class="my-4" />
+      <p class="text-center text-muted small mb-0">
+        Default: <code>admin@school.com</code> / <code>admin123</code>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('togglePwd').addEventListener('click', function() {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      pwd.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  });
+</script>
+<%- include('partials/footer') %>
