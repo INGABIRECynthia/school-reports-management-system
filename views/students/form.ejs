@@ -1,0 +1,61 @@
+<% const activePage = 'students'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="container py-4" style="max-width:600px">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">
+      <i class="bi bi-person-<%= student ? 'gear' : 'plus' %> me-2 text-primary"></i>
+      <%= student ? 'Edit Student' : 'Add Student' %>
+    </h2>
+    <a href="/students" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+      <form action="/students<%= student ? '/' + student.id + '?_method=PUT' : '' %>" method="POST" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Student ID <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="student_id"
+                 value="<%= student ? student.student_id : '' %>" placeholder="e.g. S001" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="name"
+                 value="<%= student ? student.name : '' %>" placeholder="e.g. Alice Johnson" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Class <span class="text-danger">*</span></label>
+          <select class="form-select" name="class_name" required>
+            <option value="">-- Select class --</option>
+            <% ['Form 1','Form 2','Form 3','Form 4','Form 5','Form 6'].forEach(c => { %>
+              <option value="<%= c %>" <%= student && student.class_name === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Academic Year <span class="text-danger">*</span></label>
+          <select class="form-select" name="year" required>
+            <option value="">-- Select year --</option>
+            <% for (let y = new Date().getFullYear(); y >= 2020; y--) { %>
+              <option value="<%= y %>" <%= student && student.year === y ? 'selected' : '' %>><%= y %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-save me-2"></i><%= student ? 'Update' : 'Add' %> Student
+          </button>
+          <a href="/students" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

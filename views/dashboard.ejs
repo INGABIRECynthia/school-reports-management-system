@@ -1,0 +1,141 @@
+<% const activePage = 'dashboard'; %>
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">Dashboard</h2>
+      <p class="text-muted mb-0">Welcome back, <%= user.name %>!</p>
+    </div>
+    <span class="badge bg-primary fs-6"><i class="bi bi-calendar3 me-1"></i><%= new Date().toDateString() %></span>
+  </div>
+
+  <%- include('partials/alerts') %>
+
+  <!-- Stats cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+            <i class="bi bi-people-fill text-primary fs-2"></i>
+          </div>
+          <div>
+            <div class="fs-2 fw-bold text-primary"><%= stats.students %></div>
+            <div class="text-muted">Total Students</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-success bg-opacity-10 p-3">
+            <i class="bi bi-book-fill text-success fs-2"></i>
+          </div>
+          <div>
+            <div class="fs-2 fw-bold text-success"><%= stats.courses %></div>
+            <div class="text-muted">Total Courses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+            <i class="bi bi-pencil-square text-warning fs-2"></i>
+          </div>
+          <div>
+            <div class="fs-2 fw-bold text-warning"><%= stats.grades %></div>
+            <div class="text-muted">Grades Entered</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-info bg-opacity-10 p-3">
+            <i class="bi bi-building text-info fs-2"></i>
+          </div>
+          <div>
+            <div class="fs-2 fw-bold text-info"><%= stats.classes %></div>
+            <div class="text-muted">Classes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Quick actions -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 fw-bold pt-3">
+          <i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions
+        </div>
+        <div class="card-body d-flex flex-column gap-2">
+          <a href="/students/new" class="btn btn-outline-primary text-start">
+            <i class="bi bi-person-plus me-2"></i>Add New Student
+          </a>
+          <a href="/courses/new" class="btn btn-outline-success text-start">
+            <i class="bi bi-plus-circle me-2"></i>Add New Course
+          </a>
+          <a href="/grades/enter" class="btn btn-outline-warning text-start">
+            <i class="bi bi-pencil me-2"></i>Enter Grades
+          </a>
+          <a href="/reports/generate?class_name=Form+1&term=Term+1&year=2024" class="btn btn-outline-info text-start">
+            <i class="bi bi-file-earmark-text me-2"></i>Generate Report
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent grades -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 fw-bold pt-3">
+          <i class="bi bi-clock-history text-primary me-2"></i>Recent Grade Entries
+        </div>
+        <div class="card-body p-0">
+          <% if (recentGrades.length === 0) { %>
+            <p class="text-muted p-3 mb-0">No grades entered yet.</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Term</th>
+                    <th>Year</th>
+                    <th>Marks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% recentGrades.forEach(g => { %>
+                    <tr>
+                      <td><%= g.student_name %></td>
+                      <td><%= g.course_name %></td>
+                      <td><%= g.term %></td>
+                      <td><%= g.year %></td>
+                      <td>
+                        <span class="badge bg-<%= (g.marks/g.max_marks)*100 >= 50 ? 'success' : 'danger' %>">
+                          <%= g.marks %>/<%= g.max_marks %>
+                        </span>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

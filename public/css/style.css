@@ -1,0 +1,54 @@
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Navbar active link underline */
+.navbar-nav .nav-link.active {
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Card hover effect */
+.card {
+  transition: box-shadow 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Report card print styles */
+@media print {
+  .no-print { display: none !important; }
+  .navbar { display: none !important; }
+  .report-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  body { background: white !important; }
+  .card { border: 1px solid #dee2e6 !important; }
+  .card-header.bg-primary {
+    background: #e9f0fb !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Table improvements */
+.table th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6c757d;
+}
+
+/* Progress bar */
+.progress {
+  border-radius: 10px;
+}
+
+/* Badge sizing */
+.badge.fs-5 {
+  font-size: 1rem !important;
+}
