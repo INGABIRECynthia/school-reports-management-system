@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load report_tags %}
+{% block title %}Year Report – {{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Year Report Card</h1>
+  <p><strong>Student:</strong> {{ student.full_name }} ({{ student.student_id }})</p>
+  <p><strong>Class:</strong> {{ student.class_level }}</p>
+  <p><strong>Academic Year:</strong> {{ academic_year }}</p>
+</div>
+
+{% if report_rows %}
+<table>
+  <thead>
+    <tr>
+      <th>Course</th>
+      {% for term in terms %}
+      <th>{{ term.get_term_number_display }}</th>
+      {% endfor %}
+      <th>Average</th>
+      <th>Avg %</th>
+      <th>Grade</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in report_rows %}
+    <tr>
+      <td>{{ row.course.name }}</td>
+      {% for term in terms %}
+        <td>
+          {% with grade=row.grades|get_item:term.term_number %}
+            {% if grade %}{{ grade.score }}{% else %}–{% endif %}
+          {% endwith %}
+        </td>
+      {% endfor %}
+      <td>{% if row.average %}{{ row.average }}{% else %}–{% endif %}</td>
+      <td>{% if row.average_pct %}{{ row.average_pct }}%{% else %}–{% endif %}</td>
+      <td>
+        {% if row.average_pct %}
+          {% if row.average_pct >= 80 %}<span class="badge badge-A">A</span>
+          {% elif row.average_pct >= 70 %}<span class="badge badge-B">B</span>
+          {% elif row.average_pct >= 60 %}<span class="badge badge-C">C</span>
+          {% elif row.average_pct >= 50 %}<span class="badge badge-D">D</span>
+          {% else %}<span class="badge badge-F">F</span>
+          {% endif %}
+        {% else %}–{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No grades recorded for this student in {{ academic_year }}.</p>
+{% endif %}
+
+<div style="margin-top:16px;">
+  <a class="btn btn-secondary" href="{% url 'reports:student_detail' student.pk %}">← Back to Student</a>
+</div>
+{% endblock %}

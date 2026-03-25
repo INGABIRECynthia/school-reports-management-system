@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – School Reports{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<div style="margin-bottom:24px;">
+  <div class="stat">
+    <div class="number">{{ student_count }}</div>
+    <div class="label">Students</div>
+  </div>
+  <div class="stat">
+    <div class="number">{{ course_count }}</div>
+    <div class="label">Courses</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Academic Years</h2>
+  {% if academic_years %}
+  <table>
+    <thead><tr><th>Year</th><th>Terms</th></tr></thead>
+    <tbody>
+      {% for year in academic_years %}
+      <tr>
+        <td>{{ year.name }}</td>
+        <td>
+          {% for term in year.terms.all %}
+            <span>{{ term.get_term_number_display }}</span>{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            <em>No terms defined</em>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No academic years defined yet. <a href="/admin/reports/academicyear/add/">Add one via Admin</a>.</p>
+  {% endif %}
+</div>
+
+<a class="btn" href="{% url 'reports:student_list' %}">View All Students</a>
+{% endblock %}

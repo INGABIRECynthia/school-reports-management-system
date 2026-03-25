@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ student.full_name }} – Reports{% endblock %}
+{% block content %}
+<h1>{{ student.full_name }}</h1>
+<p style="margin-bottom:16px;">Student ID: <strong>{{ student.student_id }}</strong> &nbsp;|&nbsp; Class: <strong>{{ student.class_level }}</strong></p>
+
+{% for year in academic_years %}
+<div class="card">
+  <h2>{{ year.name }}</h2>
+  <div style="margin-bottom:10px;">
+    <a class="btn" href="{% url 'reports:year_report' student.pk year.pk %}">Year Report</a>
+  </div>
+  <div>
+    {% for term in year.terms.all %}
+    <a class="btn btn-secondary" style="margin-right:6px;margin-bottom:6px;" href="{% url 'reports:term_report' student.pk term.pk %}">
+      {{ term.get_term_number_display }} Report
+    </a>
+    {% empty %}
+    <em>No terms defined for this year.</em>
+    {% endfor %}
+  </div>
+</div>
+{% empty %}
+<p>No academic years defined. <a href="/admin/reports/academicyear/add/">Add one via Admin</a>.</p>
+{% endfor %}
+
+<a class="btn btn-secondary" href="{% url 'reports:student_list' %}">← Back to Students</a>
+{% endblock %}
