@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Students – School Reports{% endblock %}
+{% block content %}
+<h1>Students</h1>
+{% if students %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Name</th><th>Class</th><th>Reports</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in students %}
+    <tr>
+      <td>{{ student.student_id }}</td>
+      <td>{{ student.full_name }}</td>
+      <td>{{ student.class_level }}</td>
+      <td><a class="btn" href="{% url 'reports:student_detail' student.pk %}">View Reports</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No students found. <a href="/admin/reports/student/add/">Add students via Admin</a>.</p>
+{% endif %}
+{% endblock %}
